@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ozapfdis",
-    version="0.0.1",
+    version="0.0.2",
     author="Markus Harrer",
     author_email="ozapfdis@markusharrer.de",
     description="Open Zippy Analysis Project For Data In Software: A helper library that let's you import all kinds of software related data into the data analysis framework pandas.",
