@@ -1,6 +1,7 @@
 import pandas as pd
 
-def read_jdeps_file(path_to_file, fill_dependencies=False):
+
+def read_jdeps_file(path_to_file, filter_regex=None):
 	'''Imports a Java Dependency Analyzer output
 
 	Command for generating the file set externaly:
@@ -9,14 +10,11 @@ def read_jdeps_file(path_to_file, fill_dependencies=False):
 
 	You can then read the `name_your_file.txt` file with this function.
 
-	Parameters:
-		- `fill_dependencies`: Lists all target dependencies also on the source side (with empty target and type values).
-
-	The read in output gives you three Series:
+	The read in output gives you these three eries:
 
 		- "from": The full qualified class name of the origin of a dependency relationship
 		- "to": The full qualified class name of the target of the dependency relationship
-		- "type": "The kind of dependency (different values depending on your own application, good for filtering out some special dependencies)
+		- "type": The type that jdeps associates with the Java source code file
 	'''
 	deps = pd.read_csv(
 		path_to_file,
@@ -34,13 +32,9 @@ def read_jdeps_file(path_to_file, fill_dependencies=False):
 	deps['to'] = splitted_2.str[1]
 	deps['type'] = splitted_2.str[2].str.strip()
 
-	# some algorithms need to have all target dependencies also on the source side
-	if fill_dependencies:
-		additional_deps = pd.DataFrame()
-		additional_deps['from'] = deps[~deps['to'].isin(deps['from'])]['to'].unique()
-		additional_deps['to'] = pd.np.nan
-		additional_deps['type'] = pd.np.nan
-
-		deps = pd.concat([deps[['from', 'to', 'type']], additional_deps], ignore_index=True)
+	if filter_regex:
+		deps = deps[deps['from'].str.contains(filter_regex)]
+		deps = deps[deps['to'].str.contains(filter_regex)]
+		deps = deps.reset_index(drop=True)
 
 	return deps
