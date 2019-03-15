@@ -33,8 +33,11 @@ def log_numstat(path_to_git_repo):
 		names=['file'])
 		
 	commits = commit_data[commit_data['file'].isin(files['file'])].copy()
+	commits['additions'] = pd.to_numeric(commits['additions'], errors='coerce')
+	commits['deletions'] = pd.to_numeric(commits['deletions'], errors='coerce')
 	commits['timestamp'] = pd.to_datetime(commits['timestamp'])
-	return commits
+
+	return commits.reset_index(drop=True)
 
 
 def ls_files(path_to_git_repo):
