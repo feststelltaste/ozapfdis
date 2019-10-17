@@ -10,5 +10,5 @@ def read_logfile(filename):
     vmstat_temp.columns =  vmstat_temp.iloc[0]
     vmstat_temp = vmstat_temp.dropna().reset_index(drop=True)
     vmstat = vmstat_temp.iloc[:,:-2].apply(pd.to_numeric)
-    vmstat['UTC'] = pd.to_datetime(vmstat_temp['UTC'] + " " + vmstat_temp[None])
+    vmstat['UTC'] = pd.to_datetime(vmstat_temp['UTC'] + " " + vmstat_temp.iloc[:,-1])
     return vmstat.set_index('UTC')
